@@ -1,9 +1,17 @@
 import { Router } from 'express'
-import { indexWelcome } from '../controllers/index.controller';
+import { indexController } from '../controllers/index.controller';
 
-const router = Router();
+class IndexRoutes {
+	public router: Router = Router();
 
-router.route('/')
-    .get(indexWelcome);
+	constructor() {
+		this.config();
+	}
 
-export default router;
+	config(): void {
+		this.router.get('/', indexController.indexWelcome)
+	}
+}
+
+const indexRoutes = new IndexRoutes();
+export default indexRoutes.router;
