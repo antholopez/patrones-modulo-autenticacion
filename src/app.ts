@@ -1,6 +1,6 @@
 import express, { Application } from "express";
 import morgan from "morgan";
-import "reflect-metadata";
+require('dotenv').config();
 
 // Routes
 import IndexRoutes from './routes/index.routes'

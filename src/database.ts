@@ -10,11 +10,12 @@ export class Database {
 
   private connect() {
     return createPool({
-      host: 'localhost',
-      user: 'root',
-      password: 'root',
-      database: 'db_patrones',
-      connectionLimit: 10
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      port: Number(process.env.DB_PORT),
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      connectionLimit: Number(process.env.DB_CONNECTION_LIMIT)
     })
   }
 
