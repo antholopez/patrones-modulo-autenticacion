@@ -1,5 +1,12 @@
-import { createConnection, Connection } from "typeorm";
 import "reflect-metadata";
+import {
+  createConnection,
+  Connection,
+  Repository,
+  getManager,
+} from "typeorm";
+
+import { User } from "./entities/User";
 
 export class Database {
   private static instance: Database;
@@ -9,8 +16,8 @@ export class Database {
     this.connection = this.connect();
   }
 
-  private async connect() {
-    const connection: Connection = await createConnection({
+  private async connect(): Promise<Connection> {
+    return await createConnection({
       type: "mysql",
       host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT),
@@ -18,18 +25,16 @@ export class Database {
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: ["*/entities/**/*.{js,ts}"],
-      logging: true
+      logging: true,
     });
-    return connection;
   }
 
-  public static getInstance() {
+  public static getInstance(): Database {
     if (!Database.instance) Database.instance = new Database();
-
     return Database.instance;
   }
 
-  public async query() {
-    return await this.connection;
+  public static userRepository(): Repository<User> {
+    return getManager().getRepository(User);
   }
 }
