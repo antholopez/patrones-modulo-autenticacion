@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { Database } from "../database";
-import { IUser } from "../interfaces/user.interface";
+import { ISignup } from "../interfaces/signup.interface";
+import { ISignin } from "../interfaces/signin.interface";
 import { User } from "../entities/User";
 import jwt from "jsonwebtoken";
 
-import { encryptPassword } from "../utils/hash-password";
+import { encryptPassword, validatePassword } from "../utils/hash-password";
 import { ROLE } from "../constants";
 
 class AuthController {
@@ -16,7 +17,7 @@ class AuthController {
         username,
         password,
         idRole,
-      }: IUser = req.body;
+      }: ISignup = req.body;
 
       const emailExists = await Database.userRepository().findOne({ username });
       if (emailExists)
@@ -46,7 +47,6 @@ class AuthController {
         { idUser: newUser.idUser },
         { accessToken: token }
       );
-
       newUser.accessToken = token;
 
       return res.status(201).json(newUser);
@@ -55,7 +55,44 @@ class AuthController {
     }
   }
 
-  async signin() {}
+  async signin(req: Request, res: Response) {
+    try {
+      const { username, password }: ISignin = req.body;
+
+      let user = await Database.userRepository().findOne({ username });
+      if (!user)
+        return res.status(400).json({
+          statusCode: 400,
+          error: "Bad Request",
+          message: `Usuario y/o contraseña es incorrecto.`,
+        });
+
+      const correctPassword = await validatePassword(password, user.password);
+      if (!correctPassword)
+        return res.status(400).json({
+          statusCode: 400,
+          error: "Bad Request",
+          message: `Contraseña invalidad. Intentelo nuevamente.`,
+        });
+
+      const payload = {
+        id: user.idUser,
+        username: user.username,
+        idRole: user.idRole,
+      };
+      const tokenSecret = String(process.env.TOKEN_SECRET);
+      const token: string = jwt.sign(payload, tokenSecret, { expiresIn: "1d" });
+      await Database.userRepository().update(
+        { idUser: user.idUser },
+        { accessToken: token }
+      );
+      user.accessToken = token;
+
+      return res.status(200).json(user)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 }
 
 export const authController = new AuthController();

@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
-import { UserDto } from "../dto/user.dto";
+import { SignupDto } from "../dto/signup.dto";
 import { validateOrReject, ValidationError } from "class-validator";
 
-class SigninMiddleware {
+class SignupMiddleware {
   async validateRequest(req: Request, res: Response, next: NextFunction) {
     try {
-      const userRequest = new UserDto(req.body);
+      const userRequest = new SignupDto(req.body);
       await validateOrReject(userRequest);
       next();
     } catch (error) {
@@ -29,4 +29,4 @@ class SigninMiddleware {
   }
 }
 
-export const signinMiddleware = new SigninMiddleware();
+export const signupMiddleware = new SignupMiddleware();

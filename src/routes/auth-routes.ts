@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authController } from "../controllers/auth.controller";
-import { signinMiddleware } from "../middlewares/signin.midlleware";
+import { signupMiddleware } from "../middlewares/signup.middleware";
+import { signinMiddleware } from "../middlewares/signin.middleware";
 
 class AuthRoutes {
   public router: Router = Router();
@@ -10,7 +11,8 @@ class AuthRoutes {
   }
 
   config(): void {
-    this.router.post("/signup", signinMiddleware.validateRequest, authController.signup);
+    this.router.post("/signup", signupMiddleware.validateRequest, authController.signup);
+    this.router.post('/signin', signinMiddleware.validateRequest, authController.signin);
   }
 }
 

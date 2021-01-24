@@ -1,4 +1,4 @@
-export interface IUser {
+export interface ISignup {
   readonly firstName: string;
   readonly lastName: string;
   readonly username: string;

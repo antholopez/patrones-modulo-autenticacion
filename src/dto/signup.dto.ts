@@ -6,9 +6,9 @@ import {
   IsString,
   IsNumber
 } from "class-validator";
-import { IUser } from "../interfaces/user.interface";
+import { ISignup } from "../interfaces/signup.interface";
 
-export class UserDto implements IUser {
+export class SignupDto implements ISignup {
   @IsNotEmpty({
     message: "firstName es requerido.",
   })
@@ -50,7 +50,7 @@ export class UserDto implements IUser {
   idRole: number;
 
   constructor(
-    user: IUser = {
+    user: ISignup = {
       firstName: "",
       lastName: "",
       username: "",
