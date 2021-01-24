@@ -1,0 +1,6 @@
+
+export const ROLE = {
+  ESTUDIANTE: 1,
+  PROFESOR: 2,
+  ADMINISTRADOR: 3
+}

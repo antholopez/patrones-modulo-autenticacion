@@ -1,9 +1,9 @@
-import {Entity, Column, PrimaryColumn} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity('User')
 export class User {
   
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   idUser: number;
 
   @Column()
@@ -17,4 +17,10 @@ export class User {
 
   @Column()
   password: string;
+
+  @Column()
+  idRole: number;
+
+  @Column()
+  accessToken: string;
 }
