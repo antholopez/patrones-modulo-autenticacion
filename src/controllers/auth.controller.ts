@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Database } from "../database";
 import { ISignup } from "../interfaces/signup.interface";
 import { ISignin } from "../interfaces/signin.interface";
+import { ILogout } from "../interfaces/logout.interface";
 import { User } from "../entities/User";
 import jwt from "jsonwebtoken";
 
@@ -52,6 +53,7 @@ class AuthController {
       return res.status(201).json(newUser);
     } catch (error) {
       console.log(error);
+      return res.status(500).json(error.message)
     }
   }
 
@@ -60,13 +62,14 @@ class AuthController {
       const { username, password }: ISignin = req.body;
 
       let user = await Database.userRepository().findOne({ username });
+
       if (!user)
         return res.status(400).json({
           statusCode: 400,
           error: "Bad Request",
           message: `Usuario y/o contraseña es incorrecto.`,
         });
-
+  
       const correctPassword = await validatePassword(password, user.password);
       if (!correctPassword)
         return res.status(400).json({
@@ -81,7 +84,7 @@ class AuthController {
         idRole: user.idRole,
       };
       const tokenSecret = String(process.env.TOKEN_SECRET);
-      const token: string = jwt.sign(payload, tokenSecret, { expiresIn: "1d" });
+      const token: string = jwt.sign(payload, tokenSecret, { expiresIn: "1h" });
       await Database.userRepository().update(
         { idUser: user.idUser },
         { accessToken: token }
@@ -91,6 +94,23 @@ class AuthController {
       return res.status(200).json(user)
     } catch (error) {
       console.log(error)
+      return res.status(500).json(error.message)
+    }
+  }
+
+  async logout(req: Request, res: Response) {
+    try {
+      const { username }: ILogout = req.body;
+
+      await Database.userRepository().update(
+        { username },
+        { accessToken: '' }
+      );
+
+      return res.status(201).json('Logout ok.')
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json(error.message)
     }
   }
 }
