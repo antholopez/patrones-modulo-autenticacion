@@ -24,7 +24,7 @@ export class Database {
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [String(process.env.DB_ENTTIES)],
+      entities: ["dist/entities/**/*.{js,ts}"],
       logging: true,
     });
   }
