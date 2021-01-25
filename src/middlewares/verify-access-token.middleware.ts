@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
-import { LogoutDto } from "../dto/logout.dto";
+import { VerifyAccessTokenDto } from "../dto/verify-access-token.dto";
 import { validateOrReject, ValidationError } from "class-validator";
 
-class LogoutMiddleware {
+class VerifyAccessTokenMiddleware {
   async validateRequest(req: Request, res: Response, next: NextFunction) {
     try {
-      const userRequest = new LogoutDto(req.body);
+      const userRequest = new VerifyAccessTokenDto(req.body);
       await validateOrReject(userRequest);
       next();
     } catch (error) {
@@ -29,4 +29,4 @@ class LogoutMiddleware {
   }
 }
 
-export const logoutMiddleware = new LogoutMiddleware();
+export const verifyAccessTokenMiddleware = new VerifyAccessTokenMiddleware();

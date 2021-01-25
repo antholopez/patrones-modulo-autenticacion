@@ -1,11 +1,4 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsUrl,
-  MaxLength,
-  IsString,
-  IsNumber
-} from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, IsNumber } from "class-validator";
 import { ISignup } from "../interfaces/signup.interface";
 
 export class SignupDto implements ISignup {
@@ -45,9 +38,9 @@ export class SignupDto implements ISignup {
     message: "idRole es requerido.",
   })
   @IsNumber(undefined, {
-    message: 'idRole debe de ser un número.'
+    message: "idRole debe de ser un número.",
   })
-  idRole: number;
+  readonly idRole: number;
 
   constructor(
     user: ISignup = {
@@ -55,7 +48,7 @@ export class SignupDto implements ISignup {
       lastName: "",
       username: "",
       password: "",
-      idRole: 0
+      idRole: 0,
     }
   ) {
     this.firstName = user.firstName;

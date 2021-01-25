@@ -1,6 +1,4 @@
 import { Request, Response } from 'express'
-import { Database } from "../database";
-import { Role } from "../entities/Role";
 
 class IndexController {
   public async indexWelcome(req: Request, res: Response): Promise<Response | void> {
