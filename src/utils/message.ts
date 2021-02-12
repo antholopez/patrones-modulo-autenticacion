@@ -21,7 +21,12 @@ class Result {
   private message: string | string[];
   private data?: any;
 
-  constructor(statusCode: number, code: number, message: string | string[], data?: any) {
+  constructor(
+    statusCode: number,
+    code: number,
+    message: string | string[],
+    data?: any
+  ) {
     this.statusCode = statusCode;
     this.code = code;
     this.message = message;
@@ -52,18 +57,6 @@ abstract class Creator {
   }
 }
 
-class ConcreteCreatorSuccess extends Creator {
-  public factoryMethod(): Message {
-    return new ConcreteSuccess();
-  }
-}
-
-class ConcreteCreatorError extends Creator {
-  public factoryMethod(): Message {
-    return new ConcreteError();
-  }
-}
-
 class ConcreteSuccess implements Message {
   public operation(
     statusCode: number,
@@ -81,7 +74,17 @@ class ConcreteError implements Message {
     return result.body();
   }
 }
+class ConcreteCreatorSuccess extends Creator {
+  public factoryMethod(): Message {
+    return new ConcreteSuccess();
+  }
+}
 
+class ConcreteCreatorError extends Creator {
+  public factoryMethod(): Message {
+    return new ConcreteError();
+  }
+}
 export class MessageUtil {
   static sucess(
     statusCode: number,
@@ -91,7 +94,10 @@ export class MessageUtil {
     return new ConcreteCreatorSuccess().getResult(statusCode, message, data);
   }
 
-  static error(statusCode: number, message: string | string[]): ResponseMessage {
+  static error(
+    statusCode: number,
+    message: string | string[]
+  ): ResponseMessage {
     return new ConcreteCreatorError().getResult(statusCode, message);
   }
 }
