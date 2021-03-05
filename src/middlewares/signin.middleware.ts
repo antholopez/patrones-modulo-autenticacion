@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { SigninDto } from "../dto/signin.dto";
 import { validateOrReject, ValidationError } from "class-validator";
+import { MessageUtil } from "../utils/message";
 
 class SigninMiddleware {
   async validateRequest(req: Request, res: Response, next: NextFunction) {
@@ -20,11 +21,7 @@ class SigninMiddleware {
           }
         }
       }
-      return res.status(400).json({
-        statusCode: 400,
-        error: "Bad Request",
-        message: validations,
-      });
+      return res.status(400).json(MessageUtil.error(400, validations));
     }
   }
 }

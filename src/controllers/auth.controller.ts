@@ -6,6 +6,7 @@ import { User } from "../entities/User";
 import jwt from "jsonwebtoken";
 
 import { encryptPassword, validatePassword } from "../utils/hash-password";
+import { MessageUtil } from "../utils/message";
 
 class AuthController {
   constructor() {}
@@ -22,11 +23,9 @@ class AuthController {
 
       const emailExists = await Database.userRepository().findOne({ username });
       if (emailExists)
-        return res.status(400).json({
-          statusCode: 400,
-          error: "Bad Request",
-          message: `El usuario ${username} ya existe.`,
-        });
+        return res
+          .status(400)
+          .json(MessageUtil.error(400, `El usuario ${username} ya existe.`));
 
       const user = new User();
       user.firstName = firstName;
@@ -50,10 +49,13 @@ class AuthController {
       );
       newUser.accessToken = token;
 
-      return res.status(201).json(newUser);
+      let resUser: any = newUser;
+      delete resUser.password;
+
+      return res.status(200).json(MessageUtil.sucess(200, "exitoso", resUser));
     } catch (error) {
       console.log(error);
-      return res.status(500).json(error.message);
+      return res.status(500).json(MessageUtil.error(500, error.message));
     }
   }
 
@@ -64,19 +66,19 @@ class AuthController {
       let user = await Database.userRepository().findOne({ username });
 
       if (!user)
-        return res.status(400).json({
-          statusCode: 400,
-          error: "Bad Request",
-          message: `Usuario y/o contraseña es incorrecto.`,
-        });
+        return res
+          .status(400)
+          .json(
+            MessageUtil.error(400, "Usuario y/o contraseña es incorrecto.")
+          );
 
       const correctPassword = await validatePassword(password, user.password);
       if (!correctPassword)
-        return res.status(400).json({
-          statusCode: 400,
-          error: "Bad Request",
-          message: `Contraseña invalidad. Intentelo nuevamente.`,
-        });
+        return res
+          .status(400)
+          .json(
+            MessageUtil.error(400, "Contraseña inválida. Intentelo nuevamente.")
+          );
 
       const payload = {
         id: user.idUser,
@@ -91,10 +93,13 @@ class AuthController {
       );
       user.accessToken = token;
 
-      return res.status(200).json(user);
+      let resUser: any = user;
+      delete resUser.password;
+
+      return res.status(200).json(MessageUtil.sucess(200, "exitoso", resUser));
     } catch (error) {
       console.log(error);
-      return res.status(500).json(error.message);
+      return res.status(500).json(MessageUtil.error(500, error.message));
     }
   }
 
@@ -104,31 +109,30 @@ class AuthController {
 
       await Database.userRepository().update({ username }, { accessToken: "" });
 
-      return res.status(201).json("Logout ok.");
+      return res.status(200).json(MessageUtil.sucess(200, "exitoso"));
     } catch (error) {
       console.log(error);
-      return res.status(500).json(error.message);
+      return res.status(500).json(MessageUtil.error(500, error.message));
     }
   }
 
   async verifyTokenAccess(req: Request, res: Response) {
     try {
       const getToken = await verifyToken(req);
-      if (getToken) return res.status(200).json(getToken);
+      if (getToken)
+        return res
+          .status(200)
+          .json(MessageUtil.sucess(200, "exitoso", getToken));
       else {
-        return res.status(400).json({
-          statusCode: 400,
-          error: "Bad Request",
-          message: `El token ya no existe.`,
-        });
+        return res
+          .status(400)
+          .json(MessageUtil.error(400, "El token ya no existe."));
       }
     } catch (error) {
       console.log(error);
-      return res.status(400).json({
-        statusCode: 400,
-        error: "Bad Request",
-        message: `El Token es inválido o ha expirado.`,
-      });
+      return res
+        .status(400)
+        .json(MessageUtil.error(400, "El Token es inválido o ha expirado."));
     }
   }
 }
